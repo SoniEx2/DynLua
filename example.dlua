@@ -1,0 +1,5 @@
+R(0) = U(0);           # R(0) = _ENV
+R(0) = R(0)["print"];  # R(0) = _ENV.print
+R(1) = "Hello world!"; # R(1) = "Hello World!"
+R(0)(R(1))             # _ENV.print("Hello World!") -- or just print("Hello World!")
+end                    # close function prototype

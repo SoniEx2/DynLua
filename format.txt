@@ -1,0 +1,53 @@
+-- definitions
+x               = ID
+R(x)            = register
+K(x)            = constant
+U(x)            = upvalue
+VAL             = Variable Argument List
+
+-- data
+$x              = constant data
+.               = DynLua code
+
+-- operations
+-- assignment
+R(x)=K(x)       = loadk/loadbool/loadnil and friends
+R(x)=R(x)       = move
+U(x)=R(x)       = setupval
+R(x)=U(x)       = getupval
+
+-- function
+R(x)(R(x)...)   = call
+
+-- math
+R(x)+R(x)       = add
+R(x)-R(x)       = sub
+R(x)*R(x)       = mul
+R(x)/R(x)       = div
+R(x)//R(x)      = floordiv
+R(x)^R(x)       = pow
+R(x)%R(x)       = mod
+-R(x)           = unm
+
+-- bitwise
+~R(x)           = bnot
+R(x)>>R(x)      = rshift
+R(x)<<R(x)      = lshift
+R(x)~R(x)       = xor
+R(x)|R(x)       = or
+R(x)&R(x)       = and
+
+-- table
+R(x)[R(x)]      = index
+R(x)[R(x)]=R(x) = newindex
+#R(x)           = len
+
+-- boolean
+not R(x)        = not
+
+-- TODO finish
+
+
+-- NOTE: compiler may optimize (or deoptimize) any sequence of instructions into more or less opcode instructions.
+-- NOTE: compiler may not use extra registers, but may use less.
+-- NOTE: compiler must error on stack-based VM with no "locals registry".
