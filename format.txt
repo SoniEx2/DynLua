@@ -7,7 +7,12 @@ VAL             = Variable Argument List
 
 -- data
 $x              = constant data
-.               = DynLua code
+.               = DynLua function
+.V              = DynLua VAL function
+.Un             = upvalue count
+.UUx            = inherited upvalue (upvalue from upvalue)
+.URx            = localized upvalue (upvalue from local)
+.Rn             = register count
 
 -- operations
 -- assignment
@@ -15,9 +20,13 @@ R(x)=K(x)       = loadk/loadbool/loadnil and friends
 R(x)=R(x)       = move
 U(x)=R(x)       = setupval
 R(x)=U(x)       = getupval
+R(x),n=VAL      = vararg (put the varargs on registers R(x) through R(x+n))
 
 -- function
-R(x)(R(x)...)   = call
+R(a),x=R(a)(x)  = call ('a' must be the same on both sides, first x is result count, second is arg count)
+R(a)=R(a)(x)    = tail call (must come before tail return)
+return R(x),n   = return
+return R(x)     = tail return (must come after tail call)
 
 -- math
 R(x)+R(x)       = add
@@ -40,13 +49,54 @@ R(x)&R(x)       = and
 -- table
 R(x)[R(x)]      = index
 R(x)[R(x)]=R(x) = newindex
+
+-- table & string
 #R(x)           = len
+
+-- string
+R(x)..R(x)      = concat
 
 -- boolean
 not R(x)        = not
 
--- TODO finish
+-- misc
+X(x)            = close all upvalues >= R(x)
 
+-- flow control (all jump)
+jump n          = jump (n can be positive or negative and is the number of *DynLua instructions*)
+
+-- comparison (requires jump)
+R(x)==R(x)      = eq
+R(x)~=R(x)      = ne
+R(x)<R(x)       = lt
+R(x)>R(x)       = gt
+R(x)<=R(x)      = le
+R(x)>=R(x)      = gt
+
+-- e.g.
+-- R(0)==R(1) -- if
+-- jump 2     
+-- R(0)=R(1)  -- then
+-- R(1)=R(2)
+-- jump 1     
+-- R(1)=R(0)  -- else
+--            -- end
+
+-- test (requires jump)
+if R(x)         = test
+
+-- e.g.
+-- if R(0)   -- if
+-- jump 2
+-- R(0)=R(1) -- then
+-- R(1)=R(2)
+-- jump 1
+-- R(1)=R(0) -- else
+--           -- end
+
+-- TODO look into OP_TESTSET and a LuaJIT equivalent
+
+-- TODO finish
 
 -- NOTE: compiler may optimize (or deoptimize) any sequence of instructions into more or less opcode instructions.
 -- NOTE: compiler may not use extra registers, but may use less.
