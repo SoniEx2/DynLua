@@ -1,0 +1,24 @@
+-- Rio Lua-specific optimizations
+
+-- OP_TESTGET (e.g. `or`, `and`) optimization
+if R(1)
+jump 2
+R(0) = R(1)
+jump 1
+R(0) = R(2)
+
+-- OP_SELF
+R(2) = R(1)
+R(1) = R(1)[R(0)]
+-- NOTE:
+R(a+1) = R(b)
+R(a) = R(b)[R(0)]
+
+-- `if not R(x)` can be optimized into a direct test
+
+-- OP_GETTABLE
+R(0) = K(0)
+R(1) = R(2)[R(0)]
+-- optimized into OP_GETTABLE, R(1) = R(2)[K(0)]
+
+-- TODO finish listing all cases
